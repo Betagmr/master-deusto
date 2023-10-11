@@ -2,7 +2,7 @@ import gym
 import numpy as np
 
 
-def train_agent(agent, n_games: int = 5000, alpha: float = 0.7, gamma: float = 0.9) -> None:
+def train_agent(agent, n_games: int = 3000, alpha: float = 0.7, gamma: float = 0.9) -> None:
     env = gym.make(
         "FrozenLake-v1",
         map_name="8x8",
@@ -20,10 +20,12 @@ def train_agent(agent, n_games: int = 5000, alpha: float = 0.7, gamma: float = 0
                 action = env.action_space.sample()
 
             new_state, reward, done, *_ = env.step(action)
+            reward = -1 if done and reward == 0 else reward
+
             agent.update_values(state, new_state, action, alpha, reward, gamma)
             state = new_state
 
-        if episodes % 500 == 0:
+        if episodes % 250 == 0:
             print(f"Game {episodes} ended with reward = {reward}.")
 
     env.close()
