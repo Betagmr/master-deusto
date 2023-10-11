@@ -1,4 +1,5 @@
 import random
+import warnings
 
 import numpy as np
 
@@ -10,7 +11,6 @@ from src.train import train_agent
 
 
 def main() -> None:
-    print("Hello, world!")
     size = 8 * 8
     n_actions = 4
     seed = 42
@@ -43,4 +43,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=DeprecationWarning)
     main()
