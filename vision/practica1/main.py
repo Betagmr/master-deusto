@@ -26,6 +26,10 @@ def create_mouse_callback(image, list_of_points):
 
 
 def save_image(image, list_of_points):
+    if len(list_of_points) < 4:
+        print("You need at least four points to save the image.")
+        return
+
     x_cords = [cord[0] for cord in list_of_points]
     y_cords = [cord[1] for cord in list_of_points]
 
@@ -52,6 +56,14 @@ def reset_state(image_path, window_name):
 
 
 def main() -> None:
+    """
+    Main function of the program.
+
+    q: Quit the program.
+    s: Save the image.
+    r: Reset the image and list of points.
+    """
+
     window_name = "Window"
     image_path = "assets/image.png"
 
