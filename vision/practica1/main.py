@@ -5,6 +5,13 @@ def create_mouse_callback(image, list_of_points):
     def onMouse(event, x, y, flags, param):
         if event == cv2.EVENT_LBUTTONUP:
             list_of_points.append((x, y))
+            cv2.circle(
+                image,
+                list_of_points[-1],
+                radius=1,
+                color=(0, 0, 255),
+                thickness=-1,
+            )
 
             if len(list_of_points) > 1:
                 cv2.line(
@@ -32,7 +39,7 @@ def save_image(image, list_of_points):
     )
 
 
-def reset_lines(image_path, window_name):
+def reset_state(image_path, window_name):
     image = cv2.imread(image_path)
     list_of_points = []
 
@@ -49,7 +56,7 @@ def main() -> None:
     image_path = "assets/image.png"
 
     cv2.namedWindow(window_name)
-    image, list_of_points = reset_lines(image_path, window_name)
+    image, list_of_points = reset_state(image_path, window_name)
 
     while True:
         cv2.imshow(window_name, image)
@@ -60,7 +67,7 @@ def main() -> None:
         elif key == ord("s"):
             save_image(image, list_of_points)
         elif key == ord("r"):
-            image, list_of_points = reset_lines(image_path, window_name)
+            image, list_of_points = reset_state(image_path, window_name)
 
     cv2.destroyAllWindows()
 
