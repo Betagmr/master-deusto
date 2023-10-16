@@ -5,7 +5,8 @@ requires-python = ">3.10"
 dependencies = [
     "numpy==1.26.0",
     "gym==0.26.2",
-    "pygame==2.5.2"
+    "pygame==2.5.2",
+    "optuna==3.3.0"
 ]
 
 [project.optional-dependencies]
