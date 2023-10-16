@@ -14,8 +14,8 @@ class FrozenLake(gym.Wrapper):
         super().__init__(env)
 
         self.env = env
-        self.n_rows = env.n_rows
-        self.n_columns = env.n_columns
+        self.n_rows = env.nrow
+        self.n_columns = env.nrow
         self.list_of_steps = []
 
     def step(self, action):
@@ -26,7 +26,7 @@ class FrozenLake(gym.Wrapper):
         elif new_state in self.list_of_steps:
             reward = -1
             done = True
-        elif not done:
+        else:
             distance = self.get_player_distance(new_state)
             reward = (30 - distance) / 1000
 
