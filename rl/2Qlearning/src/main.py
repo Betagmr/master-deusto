@@ -1,45 +1,40 @@
-import random
 import warnings
 
-import numpy as np
+from gym.envs.toy_text.frozen_lake import generate_random_map
 
 from src.algorithm.doubleqlearning import DoubleQLearning
 from src.algorithm.qlearning import QLearning
 from src.algorithm.sarsa import Sarsa
+from src.environment import FrozenLake
 from src.test import test_agent
 from src.train import train_agent
 
 
 def main() -> None:
-    size = 8 * 8
+    map_size = 16
     n_actions = 4
-    seed = 42
+    q_size = map_size**2
+    n_games = 5_000
 
-    q_table = QLearning(size, n_actions)
-    sarsa = Sarsa(size, n_actions)
-    double_q_table = DoubleQLearning(size, n_actions)
+    env_map = generate_random_map(size=map_size, p=0.7)
+    env_train = FrozenLake(env_map)
+    env_test = FrozenLake(env_map, render_mode="human")
+
+    q_table = QLearning(q_size, n_actions)
+    sarsa = Sarsa(q_size, n_actions)
+    double_q_table = DoubleQLearning(q_size, n_actions)
 
     print("Training Q-Learning agent...")
-    np.random.seed(seed)
-    random.seed(seed)
-    train_agent(q_table)
+    train_agent(env_train, q_table, n_games=n_games, alpha=0.5, gamma=0.9)
+    train_agent(env_train, sarsa, n_games=n_games, alpha=0.5, gamma=0.9)
+    train_agent(env_train, double_q_table, n_games=n_games, alpha=0.1, gamma=0.9)
+    env_train.close()
 
-    print("\nTraining sarsa agent...")
-    np.random.seed(seed)
-    random.seed(seed)
-    train_agent(sarsa)
-
-    print("\nTraining Double Q-Learning agent...")
-    np.random.seed(seed)
-    random.seed(seed)
-    train_agent(double_q_table)
-
-    print("\nTesting Q-Learning agent...")
-    test_agent(q_table)
-    print("\nTesting Sarsa agent...")
-    test_agent(sarsa)
-    print("\nTesting DoubleQ-Learning agent...")
-    test_agent(double_q_table)
+    print("Testing Q-Learning agent...")
+    test_agent(env_test, q_table, n_games=1)
+    test_agent(env_test, sarsa, n_games=1)
+    test_agent(env_test, double_q_table, n_games=1)
+    env_test.close()
 
 
 if __name__ == "__main__":
