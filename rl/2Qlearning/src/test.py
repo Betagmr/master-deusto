@@ -1,15 +1,7 @@
-import gym
 import numpy as np
 
 
-def test_agent(agent, n_games: int = 5) -> None:
-    env = gym.make(
-        "FrozenLake-v1",
-        render_mode="human",
-        map_name="8x8",
-        is_slippery=False,
-    )
-
+def test_agent(env, agent, n_games: int = 1) -> None:
     total_reward: float = 0
     for _ in range(n_games):
         done = False
@@ -17,9 +9,9 @@ def test_agent(agent, n_games: int = 5) -> None:
 
         while not done:
             action = np.argmax(agent[state])
-            new_state, reward, done, *_ = env.step(action)
+            new_state, reward, done, info = env.step(action)
             state = new_state
             total_reward += reward
 
-    print(f"Average reward score {n_games} games: {total_reward / n_games * 100}%")
-    env.close()
+    print(f"Total reward = {total_reward}.")
+    print(f"Number of steps = {info['n_steps']}.")
