@@ -19,7 +19,7 @@ class FrozenLake(gym.Wrapper):
         self.list_of_steps = []
 
     def step(self, action):
-        new_state, reward, done, _, info = self.env.step(action)
+        new_state, reward, done, aux, info = self.env.step(action)
 
         if reward == 0 and done:
             reward = -1
@@ -33,7 +33,7 @@ class FrozenLake(gym.Wrapper):
         self.list_of_steps.append(new_state)
         info["n_steps"] = len(self.list_of_steps)
 
-        return new_state, reward, done, info
+        return new_state, reward, done, aux, info
 
     def get_player_distance(self, state):
         state_row = state // (self.n_rows - 1)

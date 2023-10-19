@@ -9,9 +9,8 @@ def test_agent(env, agent, n_games: int = 1) -> None:
 
         while not done:
             action = np.argmax(agent[state])
-            new_state, reward, done, info = env.step(action)
+            new_state, reward, done, _, info = env.step(action)
             state = new_state
             total_reward += reward
 
     print(f"Total reward = {total_reward}.")
-    print(f"Number of steps = {info['n_steps']}.")
