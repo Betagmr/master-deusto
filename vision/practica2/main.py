@@ -1,44 +1,55 @@
 import cv2
+import time
 import numpy as np
 
 
-def remove_background(img):
-    MASK_COLOR = (0.0, 0.0, 0.0)  # In BGR format
+def bgremove(frame, min_thres, min_satur, min_brigth):
+    min_piel = np.array([min_thres, min_satur, min_brigth])
+    max_piel = np.array([255, 255, 255])
 
-    # == Processing =======================================================================
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray, 50, 100)
-    edges = cv2.dilate(edges, None)
-    contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+    # Convert image to HSV
+    frameHSV = cv2.GaussianBlur(frame, (7, 7), 0)
+    frameHSV = cv2.cvtColor(frameHSV, cv2.COLOR_RGB2HSV)
 
-    mask = np.zeros(edges.shape)
-    for ctn in contours:
-        area = cv2.contourArea(ctn)
-        if area > 500:
-            cv2.fillConvexPoly(mask, ctn, (255))
+    # mascara que pilla el color del tono de piel
+    skinRegion = cv2.inRange(frameHSV, min_piel, max_piel)
+    frame_skin = cv2.bitwise_and(frame, frame, mask=skinRegion)
 
-    mask = cv2.GaussianBlur(mask, (7, 7), 0)
-    mask_stack = np.dstack([mask] * 3).astype("float32") / 255.0
-    img = img.astype("float32") / 255.0
-
-    masked = (mask_stack * img) + ((1 - mask_stack) * MASK_COLOR)  # Blend
-    masked = (masked * 255).astype("uint8")
-
-    return masked
+    return frame_skin
 
 
 def main():
     window_name = "Window"
-    image_path = "assets/persona.jpeg"
 
+    cap = cv2.VideoCapture(0)
     cv2.namedWindow(window_name)
+    cv2.moveWindow(window_name, 20, 20)
 
-    img = cv2.pyrDown(cv2.imread(image_path))
-    img_sol1 = remove_background(img)
+    # Crating the trackbars
+    cv2.createTrackbar("Min", window_name, 0, 255, lambda x: x)  # 90
+    cv2.createTrackbar("Min-s", window_name, 0, 255, lambda x: x)  # 60
+    cv2.createTrackbar("Min-b", window_name, 0, 255, lambda x: x)  # 50
 
-    cv2.imshow(window_name, img_sol1)
-    cv2.moveWindow(window_name, 2920, 2)
-    cv2.waitKey(0)
+    while True:
+        _, img = cap.read()
+
+        masked_img = bgremove(
+            img,
+            cv2.getTrackbarPos("Min", window_name),
+            cv2.getTrackbarPos("Min-b", window_name),
+            cv2.getTrackbarPos("Min-s", window_name),
+        )
+
+        cv2.imshow(window_name, masked_img)
+
+        key = cv2.waitKey(1)
+        if key == ord("q"):
+            break
+        elif key == ord("s"):
+            name = "skin" + time.asctime() + ".jpg"
+            cv2.imwrite(name, masked_img)
+
+    cap.release()
     cv2.destroyAllWindows()
 
 
