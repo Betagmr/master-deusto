@@ -8,9 +8,10 @@ def train_agent(
     alpha: float = 0.7,
     gamma: float = 0.9,
     epsilon_decay: float = 0.001,
-) -> None:
+) -> int:
     epsilon = 1.0
     steps = 0
+    reward_list = []
 
     for episodes in range(n_games):
         done = False
@@ -31,6 +32,9 @@ def train_agent(
 
         epsilon = epsilon - epsilon_decay if epsilon > 0.01 else 0.01
 
-        if episodes % 100 == 0:
-            print(f"Game {episodes} ended with reward = {total_reward}.")
-            print(f"Steps: {steps}")
+        if episodes % 25 == 0:
+            reward_list.append(total_reward > 5)
+            if len(reward_list) > 5 and all(reward_list[-6:-1]):
+                return steps
+
+    return steps
