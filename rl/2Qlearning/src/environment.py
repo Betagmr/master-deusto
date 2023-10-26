@@ -21,7 +21,9 @@ class FrozenLake(gym.Wrapper):
     def step(self, action):
         new_state, reward, done, aux, info = self.env.step(action)
 
-        if reward == 0 and done:
+        if reward == 1:
+            reward = 20
+        elif reward == 0 and done:
             reward = -1
         elif new_state in self.list_of_steps:
             reward = -1

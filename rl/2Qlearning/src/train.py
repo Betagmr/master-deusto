@@ -4,10 +4,11 @@ import numpy as np
 def train_agent(
     env,
     agent,
-    n_games: int = 3000,
+    n_games: int = 10_000,
     alpha: float = 0.7,
     gamma: float = 0.9,
     epsilon_decay: float = 0.001,
+    max_steps: int = 100_000,
 ) -> int:
     epsilon = 1.0
     steps = 0
@@ -30,11 +31,15 @@ def train_agent(
             total_reward += reward
             steps += 1
 
+            if steps > max_steps:
+                return steps
+
         epsilon = epsilon - epsilon_decay if epsilon > 0.01 else 0.01
 
-        if episodes % 25 == 0:
-            reward_list.append(total_reward > 5)
-            if len(reward_list) > 5 and all(reward_list[-6:-1]):
-                return steps
+        reward_list.append(reward == 20)
+        if len(reward_list) > 10 and all(reward_list[-11:-1]):
+            return steps
+
+        # print(f"Episode: {episodes} | Reward: {total_reward} | Steps: {steps}")
 
     return steps

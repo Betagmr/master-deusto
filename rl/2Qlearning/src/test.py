@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def test_agent(env, agent, n_games: int = 1) -> None:
+def test_agent(env, agent, n_games: int = 1) -> int:
     total_reward: float = 0
     for _ in range(n_games):
         done = False
@@ -13,4 +13,4 @@ def test_agent(env, agent, n_games: int = 1) -> None:
             state = new_state
             total_reward += reward
 
-    print(f"Total reward = {total_reward}.")
+    return total_reward
