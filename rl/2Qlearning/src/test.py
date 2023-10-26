@@ -1,16 +1,19 @@
 import numpy as np
 
 
-def test_agent(env, agent, n_games: int = 1) -> int:
-    total_reward: float = 0
-    for _ in range(n_games):
-        done = False
-        state, _ = env.reset()
+def test_agent(env, agent) -> int:
+    total_reward = 0
+    done = False
+    state, _ = env.reset()
+    steps = 0
+    while not done:
+        action = np.argmax(agent[state])
+        new_state, reward, done, _, info = env.step(action)
+        state = new_state
+        total_reward += reward
+        steps += 1
 
-        while not done:
-            action = np.argmax(agent[state])
-            new_state, reward, done, _, info = env.step(action)
-            state = new_state
-            total_reward += reward
+        if steps > 1_000:
+            return total_reward
 
     return total_reward

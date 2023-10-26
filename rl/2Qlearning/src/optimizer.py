@@ -9,14 +9,14 @@ from src.test import test_agent
 from src.train import train_agent
 
 
-def create_objective_function(env, q_size: int, n_actions: int):
+def create_objective_function(env, q_size: int, n_actions: int, refres_rate: int):
     def objetive(trial: Trial):
         algorithm_name = trial.suggest_categorical(
             "algorithm_name", ["sarsa", "qlearning", "doubleqlearning"]
         )
         lr = trial.suggest_float("learning_rate", 0.1, 1, step=0.05)
-        lr_decay = trial.suggest_float("learning_rate_decay", 0.1, 1, step=0.05)
-        epsilon_decay = trial.suggest_float("epsiolon_decay", 0.00001, 1, log=True)
+        lr_decay = trial.suggest_float("learning_rate_decay", 0.6, 1, step=0.05)
+        epsilon_decay = trial.suggest_float("epsiolon_decay", 0.0001, 1, log=True)
 
         agent = get_algorithm_instance(algorithm_name, q_size, n_actions)
 
@@ -26,11 +26,12 @@ def create_objective_function(env, q_size: int, n_actions: int):
             alpha=lr,
             gamma=lr_decay,
             epsilon_decay=epsilon_decay,
+            refres_rate=refres_rate,
         )
 
-        test_rewards = test_agent(env, agent, n_games=1)
+        test_rewards = test_agent(env, agent)
 
-        return steps if test_rewards > 1 else 100_000
+        return steps if test_rewards > 1 else 500_000
 
     return objetive
 
@@ -45,16 +46,16 @@ if __name__ == "__main__":
         direction="minimize",
     )
     study_frozen.optimize(
-        create_objective_function(env_frozen, q_size=16**2, n_actions=4),
-        n_trials=50,
+        create_objective_function(env_frozen, q_size=16**2, n_actions=4, refres_rate=1),
+        n_trials=100,
     )
 
-    # study_taxi = optuna.create_study(
-    #     study_name="taxi-study",
-    #     storage="sqlite:///taxi-study.db",
-    #     direction="minimize",
-    # )
-    # study_taxi.optimize(
-    #     create_objective_function(env_taxi, q_size=500, n_actions=6),
-    #     n_trials=100,
-    # )
+    study_taxi = optuna.create_study(
+        study_name="taxi-study",
+        storage="sqlite:///taxi-study.db",
+        direction="minimize",
+    )
+    study_taxi.optimize(
+        create_objective_function(env_taxi, q_size=500, n_actions=6, refres_rate=25),
+        n_trials=100,
+    )
