@@ -18,3 +18,9 @@ install:
 
 run:
 	$(PYTHON) -m src.main
+
+optuna-frozen:
+	$(PYTHON) -m optuna-dashboard sqlite:///frozen-study.db
+
+optuna-taxi:
+	$(PYTHON) -m optuna-dashboard sqlite:///taxi-study.db
