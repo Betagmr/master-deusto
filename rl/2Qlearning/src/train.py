@@ -9,6 +9,7 @@ def train_agent(
     gamma: float = 0.9,
     epsilon_decay: float = 0.001,
     max_steps: int = 500_000,
+    early_stop: bool = True,
     refres_rate: int = 25,
 ) -> int:
     epsilon = 1.0
@@ -37,7 +38,7 @@ def train_agent(
 
         epsilon = epsilon - epsilon_decay if epsilon > 0.01 else 0.01
 
-        if episodes % refres_rate == 0:
+        if early_stop and episodes % refres_rate == 0:
             reward_list.append(reward == 20)
             if len(reward_list) > 250 and all(reward_list[-251:-1]):
                 return steps
