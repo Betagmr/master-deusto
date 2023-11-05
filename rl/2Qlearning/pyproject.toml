@@ -6,7 +6,8 @@ dependencies = [
     "numpy==1.26.0",
     "gym==0.26.2",
     "pygame==2.5.2",
-    "optuna==3.3.0"
+    "optuna==3.3.0",
+    "optuna-dashboard==0.13.0"
 ]
 
 [project.optional-dependencies]

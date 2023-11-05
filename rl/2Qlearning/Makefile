@@ -19,6 +19,9 @@ install:
 run:
 	$(PYTHON) -m src.main
 
+optuna:
+	$(PYTHON) -m src.optimizer
+
 optuna-frozen:
 	$(PYTHON) -m optuna-dashboard sqlite:///frozen-study.db
 
