@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "snake"
+version = "0.1.0"
+description = ""
+authors = ["Asier Villar <asiervillar@outlook.es>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+gym = "^0.26.2"
+numpy = "^1.26.2"
+opencv-python = "^4.8.1.78"
+stable-baselines3 = {extras = ["extra"], version = "^2.2.1"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
